@@ -1,32 +1,44 @@
 #include <iostream>
-#include <vector>
+#include <string>
+#include "parser.h"
 
-int hello(const char *str)
+#ifdef _WIN32
+std::string buff;
+
+std::string readline(const char *output)
 {
-	std::cout << str << std::endl;
-	return static_cast<int>(str[0]);
+	std::cout << output;
+	getline(std::cin, buff);
+    
+	return buff;
 }
+
+void add_history(const char *buffer)
+{
+
+}
+#else
+#include <editline/readline.h>
+#endif
 
 int main()
 {
-	// TODO: FIXME: NOTE: REF:
-	std::cout << "hello, world." << std::endl;
+	std::cout << "lispV v0.0.1 REPL edition\n"
+			  << "ctrl+c to exit\n"
+			  << "--------------------\n";
 
-	hello("printf");
+	parser::createParser();
 
-	return 0;
-	int x;
+	std::string buff;
+    while(true)
+    {
+		buff = readline("[lispV]$ ");
+		add_history(buff.c_str());
 
-	if(x == 0 || x <= 1 && x > 1)
-		return 1;
-	
-	while(true)
-	{
-		std::cout << x;
-	}
+		parser::tryParse(buff.c_str());
 
-	for(int i = 0; i < 12; i++)
-	{
-		return hello("dude...");
-	}
+        std::cout << "youre input was: " << buff << std::endl;
+    }
+
+	parser::cleanParser();
 }
